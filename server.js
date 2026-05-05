@@ -31,9 +31,11 @@ function oauthClient() {
 }
 
 function authedClient() {
-  if (!fs.existsSync(TOKEN_PATH)) return null;
+  // Read token from env var (production) or token.json file (local)
+  const raw = process.env.GOOGLE_TOKEN || (fs.existsSync(TOKEN_PATH) ? fs.readFileSync(TOKEN_PATH, 'utf8') : null);
+  if (!raw) return null;
   const client = oauthClient();
-  client.setCredentials(JSON.parse(fs.readFileSync(TOKEN_PATH)));
+  client.setCredentials(JSON.parse(raw));
   return client;
 }
 
@@ -64,7 +66,10 @@ app.get('/auth/callback', async (req, res) => {
   try {
     const client = oauthClient();
     const { tokens } = await client.getToken(req.query.code);
+    // Always write to file (works locally and on Railway ephemeral disk)
     fs.writeFileSync(TOKEN_PATH, JSON.stringify(tokens));
+    // Log the token so you can copy it into GOOGLE_TOKEN env var on Railway
+    if (process.env.PUBLIC_URL) console.log('[auth] GOOGLE_TOKEN:', JSON.stringify(tokens));
     res.redirect('/?connected=true');
   } catch (err) {
     res.redirect('/?error=auth_failed');
