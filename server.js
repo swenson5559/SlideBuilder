@@ -7,7 +7,9 @@ const multer  = require('multer');
 const app  = express();
 const PORT = process.env.PORT || 3000;
 
-const TOKEN_PATH = path.join(__dirname, 'token.json');
+// In production, store token on a persistent volume mounted at /app/data
+const TOKEN_DIR  = process.env.TOKEN_DIR || __dirname;
+const TOKEN_PATH = path.join(TOKEN_DIR, 'token.json');
 
 // Public URL: set PUBLIC_URL env var in production (e.g. https://yourapp.railway.app)
 // Falls back to localhost for local development.
