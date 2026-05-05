@@ -24,7 +24,12 @@ const upload = multer({ dest: path.join(__dirname, 'uploads') });
 function oauthClient() {
   const { google } = require('googleapis');
   // Prefer GOOGLE_CREDENTIALS env var (production); fall back to credentials.json (local)
-  const raw = process.env.GOOGLE_CREDENTIALS || fs.readFileSync(path.join(__dirname, 'credentials.json'), 'utf8');
+  let raw = process.env.GOOGLE_CREDENTIALS;
+  if (!raw) {
+    const localPath = path.join(__dirname, 'credentials.json');
+    if (!fs.existsSync(localPath)) throw new Error('GOOGLE_CREDENTIALS env var not set and credentials.json not found.');
+    raw = fs.readFileSync(localPath, 'utf8');
+  }
   const creds = JSON.parse(raw);
   const { client_id, client_secret } = creds.installed || creds.web;
   return new google.auth.OAuth2(client_id, client_secret, `${PUBLIC_URL}/auth/callback`);
@@ -47,7 +52,12 @@ function extractId(val) {
 
 // ── Routes ────────────────────────────────────────────────────────────────────
 app.get('/auth/status', (req, res) => {
-  res.json({ connected: !!authedClient() });
+  try {
+    res.json({ connected: !!authedClient() });
+  } catch (e) {
+    console.error('[auth/status]', e.message);
+    res.json({ connected: false });
+  }
 });
 
 app.get('/auth/google', (req, res) => {
