@@ -20,6 +20,13 @@ app.use(express.static('public'));
 
 const upload = multer({ dest: path.join(__dirname, 'uploads') });
 
+// Startup diagnostics — confirm env vars reach the runtime
+console.log('[startup] PORT:', PORT);
+console.log('[startup] PUBLIC_URL:', PUBLIC_URL);
+console.log('[startup] GOOGLE_CLIENT_ID:', process.env.GOOGLE_CLIENT_ID ? `set (${process.env.GOOGLE_CLIENT_ID.slice(0, 12)}…)` : 'NOT SET');
+console.log('[startup] GOOGLE_CLIENT_SECRET:', process.env.GOOGLE_CLIENT_SECRET ? 'set' : 'NOT SET');
+console.log('[startup] ANTHROPIC_API_KEY:', process.env.ANTHROPIC_API_KEY ? 'set' : 'NOT SET');
+
 // ── Auth helpers ──────────────────────────────────────────────────────────────
 function oauthClient() {
   const { google } = require('googleapis');
