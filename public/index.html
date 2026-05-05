@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Presentation Builder</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+
+    <header>
+      <h1><span class="icon">✦</span> AI Presentation Builder</h1>
+      <p class="subtitle">Create or edit Google Slides presentations with AI assistance</p>
+    </header>
+
+    <!-- Google Auth -->
+    <div id="auth-bar" class="auth-bar disconnected">
+      <span id="auth-status-text">Not connected to Google</span>
+      <a href="/auth/google" id="auth-btn" class="btn-auth">Connect Google Account</a>
+    </div>
+
+    <form id="slide-form" autocomplete="off">
+
+      <!-- Existing presentation -->
+      <div class="field-group">
+        <input type="text" id="presentationId" name="presentationId" placeholder="Google Slides Link or ID (optional — leave empty to create new)" />
+        <span class="hint">Paste an existing presentation link to update it in place</span>
+      </div>
+
+      <!-- Template -->
+      <div class="field-group">
+        <input type="text" id="templateId" name="templateId" placeholder="Template Link or ID (optional — imports colors from your template)" />
+        <span class="hint">Paste a Google Slides template link to apply its color scheme automatically</span>
+      </div>
+
+      <!-- Presentation identity -->
+      <div class="row-2">
+        <div class="field-group">
+          <label>Presentation Title</label>
+          <input type="text" id="title" name="title" placeholder="e.g. Q3 Strategy Overview" />
+        </div>
+        <div class="field-group">
+          <label>Client / Brand Name</label>
+          <input type="text" id="clientName" name="clientName" placeholder="e.g. NMW Law Firm" />
+        </div>
+      </div>
+
+      <div class="field-group">
+        <input type="text" id="tagline" name="tagline" placeholder="Tagline (optional)" />
+      </div>
+
+      <!-- Colors -->
+      <div class="section-label">Brand Colors</div>
+      <div class="color-row">
+        <div class="color-field">
+          <label>Primary <span class="hint-inline">headers, backgrounds</span></label>
+          <div class="color-input-wrap">
+            <input type="color" id="primaryColorPicker" value="#1976d2" />
+            <input type="text"  id="primaryColor" name="primaryColor" value="#1976d2" maxlength="7" />
+          </div>
+        </div>
+        <div class="color-field">
+          <label>Secondary <span class="hint-inline">column labels</span></label>
+          <div class="color-input-wrap">
+            <input type="color" id="secondaryColorPicker" value="#dc004e" />
+            <input type="text"  id="secondaryColor" name="secondaryColor" value="#dc004e" maxlength="7" />
+          </div>
+        </div>
+        <div class="color-field">
+          <label>Accent <span class="hint-inline">highlights, lines</span></label>
+          <div class="color-input-wrap">
+            <input type="color" id="accentColorPicker" value="#ffa726" />
+            <input type="text"  id="accentColor" name="accentColor" value="#ffa726" maxlength="7" />
+          </div>
+        </div>
+        <div class="color-field">
+          <label>Background</label>
+          <div class="color-input-wrap">
+            <input type="color" id="bgColorPicker" value="#ffffff" />
+            <input type="text"  id="bgColor" name="bgColor" value="#ffffff" maxlength="7" />
+          </div>
+        </div>
+        <div class="color-field">
+          <label>Text</label>
+          <div class="color-input-wrap">
+            <input type="color" id="textColorPicker" value="#222222" />
+            <input type="text"  id="textColor" name="textColor" value="#222222" maxlength="7" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Font + Size -->
+      <div class="row-2">
+        <div class="field-group">
+          <label>Font</label>
+          <select id="font" name="font">
+            <option value="Helvetica Neue">Helvetica Neue</option>
+            <option value="Arial">Arial</option>
+            <option value="Roboto" selected>Roboto</option>
+            <option value="Open Sans">Open Sans</option>
+            <option value="Lato">Lato</option>
+            <option value="Montserrat">Montserrat</option>
+            <option value="Georgia">Georgia</option>
+            <option value="Playfair Display">Playfair Display</option>
+            <option value="Inter">Inter</option>
+          </select>
+        </div>
+        <div class="field-group">
+          <label>Slide Size</label>
+          <div class="toggle-group">
+            <label class="toggle-opt active"><input type="radio" name="slideSize" value="16:9" checked /> 16:9 Widescreen</label>
+            <label class="toggle-opt"><input type="radio" name="slideSize" value="4:3" /> 4:3 Standard</label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Logo -->
+      <div class="field-group">
+        <label>Logo</label>
+        <label class="upload-btn" for="logo">
+          <span>↑</span> UPLOAD LOGO
+          <input type="file" id="logo" name="logo" accept="image/*" hidden />
+        </label>
+        <span id="logo-name" class="hint"></span>
+      </div>
+
+      <!-- AI settings -->
+      <div class="section-label">AI Settings</div>
+      <div class="row-3">
+        <div class="field-group">
+          <label>Slide Count</label>
+          <div class="slider-wrap">
+            <input type="range" id="slideCount" name="slideCount" min="5" max="20" value="10" step="1" />
+            <span id="slideCountLabel">10 slides</span>
+          </div>
+        </div>
+        <div class="field-group">
+          <label>Tone</label>
+          <select id="tone" name="tone">
+            <option value="Professional">Professional</option>
+            <option value="Warm">Warm</option>
+            <option value="Bold">Bold</option>
+            <option value="Minimal">Minimal</option>
+            <option value="Creative">Creative</option>
+          </select>
+        </div>
+        <div class="field-group">
+          <label>Audience</label>
+          <select id="audience" name="audience">
+            <option value="Internal Team">Internal Team</option>
+            <option value="Clients">Clients</option>
+            <option value="Investors">Investors</option>
+            <option value="General Public">General Public</option>
+            <option value="Leadership">Leadership</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Description -->
+      <div class="field-group">
+        <label>Presentation Description</label>
+        <textarea id="description" name="description" rows="6" placeholder="Describe what you want in the presentation. Include the topic, key sections, specific points to cover, any data or stats to highlight, and the overall message you want to leave the audience with. The more detail you give, the better the output."></textarea>
+        <span class="hint">The AI uses this to generate all slide content</span>
+      </div>
+
+      <!-- Submit -->
+      <button type="submit" id="generate-btn" class="btn-generate" disabled>
+        <span class="btn-icon">✦</span> <span id="btn-text">GENERATE PRESENTATION</span>
+      </button>
+
+    </form>
+
+    <!-- Result -->
+    <div id="result" class="result hidden">
+      <div class="result-inner">
+        <div class="result-icon">✓</div>
+        <div>
+          <div class="result-title">Presentation ready</div>
+          <a id="result-link" href="#" target="_blank" class="result-link">Open in Google Slides →</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Error -->
+    <div id="error-bar" class="error-bar hidden"></div>
+
+  </div>
+  <script src="app.js"></script>
+</body>
+</html>
