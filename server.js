@@ -23,15 +23,18 @@ const upload = multer({ dest: path.join(__dirname, 'uploads') });
 // ── Auth helpers ──────────────────────────────────────────────────────────────
 function oauthClient() {
   const { google } = require('googleapis');
-  // Prefer GOOGLE_CREDENTIALS env var (production); fall back to credentials.json (local)
-  let raw = process.env.GOOGLE_CREDENTIALS;
-  if (!raw) {
+  let client_id, client_secret;
+  if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
+    // Production: individual env vars
+    client_id     = process.env.GOOGLE_CLIENT_ID;
+    client_secret = process.env.GOOGLE_CLIENT_SECRET;
+  } else {
+    // Local: read from credentials.json
     const localPath = path.join(__dirname, 'credentials.json');
-    if (!fs.existsSync(localPath)) throw new Error('GOOGLE_CREDENTIALS env var not set and credentials.json not found.');
-    raw = fs.readFileSync(localPath, 'utf8');
+    if (!fs.existsSync(localPath)) throw new Error('GOOGLE_CLIENT_ID/SECRET env vars not set and credentials.json not found.');
+    const creds = JSON.parse(fs.readFileSync(localPath, 'utf8'));
+    ({ client_id, client_secret } = creds.installed || creds.web);
   }
-  const creds = JSON.parse(raw);
-  const { client_id, client_secret } = creds.installed || creds.web;
   return new google.auth.OAuth2(client_id, client_secret, `${PUBLIC_URL}/auth/callback`);
 }
 
